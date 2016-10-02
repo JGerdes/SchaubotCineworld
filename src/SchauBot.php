@@ -10,8 +10,9 @@ class SchauBot {
 	private $config;
 	private $logger;
 
-	function __construct($config) {
+	function __construct($config, $entityManager) {
 		$this->config = $config;
+		$this->entityManager = $entityManager;
 		$this->logger = new Logger(LOG_DIR);
 	}
 

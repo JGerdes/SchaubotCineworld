@@ -1,18 +1,17 @@
 <?php
-    //log errors in file
-    ini_set('error_log', 'logs/errors.txt');
-    ini_set('log_errors', true);
+require_once "bootstrap.php";
 
-    define('LOG_DIR', __DIR__.'/logs');
+//log errors in file
+ini_set('error_log', 'logs/errors.txt');
+ini_set('log_errors', true);
 
-    require 'vendor/autoload.php';
+define('LOG_DIR', __DIR__.'/logs');
 
-    use JGerdes\SchauBot\SchauBot;
 
-    $config = parse_ini_file('config.ini', true);
+use JGerdes\SchauBot\SchauBot;
 
-    $bot = new SchauBot($config);
-    $bot->run();
+$bot = new SchauBot($config, $entityManager);
+$bot->run();
 
 
 ?>
