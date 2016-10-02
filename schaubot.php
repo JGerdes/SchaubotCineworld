@@ -1,4 +1,8 @@
 <?php
+    //log errors in file
+    ini_set('error_log', 'logs/errors.txt');
+    ini_set('log_errors', true);
+
     require 'vendor/autoload.php';
 
     use Katzgrau\KLogger\Logger;
@@ -10,6 +14,5 @@
 
     $telegram = new Api($config['telegram']['token']);
 
-    
 
 ?>
