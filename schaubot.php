@@ -14,5 +14,12 @@
 
     $telegram = new Api($config['telegram']['token']);
 
+    $updates = $telegram->getWebhookUpdates();
+
+    $chatId = $updates->getMessage()->getChat()->getId();
+    $response = $telegram->sendMessage([
+        'chat_id' => $chatId, 
+        'text' => 'Hello World'
+    ]);
 
 ?>
