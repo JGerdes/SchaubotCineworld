@@ -3,23 +3,16 @@
     ini_set('error_log', 'logs/errors.txt');
     ini_set('log_errors', true);
 
+    define('LOG_DIR', __DIR__.'/logs');
+
     require 'vendor/autoload.php';
 
-    use Katzgrau\KLogger\Logger;
-    use Telegram\Bot\Api;
-
-    $logger = new Logger(__DIR__.'/logs');
+    use JGerdes\SchauBot\SchauBot;
 
     $config = parse_ini_file('config.ini', true);
 
-    $telegram = new Api($config['telegram']['token']);
+    $bot = new SchauBot($config);
+    $bot->run();
 
-    $updates = $telegram->getWebhookUpdates();
-
-    $chatId = $updates->getMessage()->getChat()->getId();
-    $response = $telegram->sendMessage([
-        'chat_id' => $chatId, 
-        'text' => 'Hello World'
-    ]);
 
 ?>

@@ -2,5 +2,8 @@
     "require": {
         "irazasyed/telegram-bot-sdk": "2.0",
         "katzgrau/klogger": "dev-master"
-    }
+    },
+    "autoload": {
+	    "psr-4": {"JGerdes\\SchauBot\\": "src/"}
+	}
 }
