@@ -9,42 +9,42 @@ namespace JGerdes\SchauBot\Entity;
 class Movie {
 
 	/**
-     * @Id @Column(type="integer")
-     * @GeneratedValue
-     */
-    private $id;
+	 * @Id @Column(type="integer")
+	 * @GeneratedValue
+	 */
+	private $id;
 
-    /**
-     * @Column(type="string", length=140, unique=true) 
-     */
-    private $title;
+	/**
+	 * @Column(type="string", length=140, unique=true) 
+	 */
+	private $title;
 
-    /**
-     * @Column(type="datetime", name="released_at")
-     */
-    private $releaseDate;
+	/**
+	 * @Column(type="datetime", name="released_at")
+	 */
+	private $releaseDate;
 
-    /**
-     * @Column(type="text")
-     */
-    private $description;
+	/**
+	 * @Column(type="text")
+	 */
+	private $description;
 
-    /**
-     * @Column(type="integer")
-     */
-    private $duration;
+	/**
+	 * @Column(type="integer")
+	 */
+	private $duration;
 
-    /** 
-     * @Column(type="integer", name="content_rating") 
-     */
-    private $contentRating;
+	/** 
+	 * @Column(type="integer", name="content_rating") 
+	 */
+	private $contentRating;
 
-    /**
-     * @Column(type="boolean", name="is_3d")
-     */
-    private $is3D;
+	/**
+	 * @Column(type="boolean", name="is_3d")
+	 */
+	private $is3D;
 
-   	public function getId() {
+	public function getId() {
 		return $this->id;
 	}
 

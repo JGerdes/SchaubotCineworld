@@ -28,16 +28,16 @@ class JavascriptMovieParser {
 	/**
 	 * Split data in parts for movie and screening definition
 	 */
-    private function preprocess($data) {
-    	$movieStart = strpos($data, SELF::START_STRING_MOVIES);
+	private function preprocess($data) {
+		$movieStart = strpos($data, SELF::START_STRING_MOVIES);
 		$moviePart = substr($data, $movieStart, sizeof($data) - $movieStart);
 		
 		$screeningStart = strpos($moviePart, SELF::START_STRING_SCREENINGS);
 
 		$this->rawMovieData = substr($moviePart, 0, $screeningStart);
 
-    	return $data;
-    }
+		return $data;
+	}
 
 	public function parseMovies() {
 		$movies = array();
@@ -59,39 +59,39 @@ class JavascriptMovieParser {
 	}
 
 	public function setRawData($data) {
-    	$preprocessed = $this->preprocess($data);
-    	$this->data = $preprocessed;
-    }
+		$preprocessed = $this->preprocess($data);
+		$this->data = $preprocessed;
+	}
 
-    private function parseSingleMovie($rawMovie, $pattern) {
-    	$matches = null;
-    	preg_match_all($pattern, $rawMovie, $matches);
-    	$movie = new Movie();
-    	$movie->setTitle($matches[2][0]);
-    	$movie->setDuration((int)$matches[4][0]);
-    	$movie->setContentRating((int)$matches[5][0]);
-    	$movie->setDescription($matches[6][0]);
-    	$movie->set3D($matches[7][0] === '1');
-    	$date = \DateTime::createFromFormat(SELF::FORMAT_DATE, $matches[3][0]);
-    	$movie->setReleaseDate($date);
-    	return $movie;
-    	
-    }
+	private function parseSingleMovie($rawMovie, $pattern) {
+		$matches = null;
+		preg_match_all($pattern, $rawMovie, $matches);
+		$movie = new Movie();
+		$movie->setTitle($matches[2][0]);
+		$movie->setDuration((int)$matches[4][0]);
+		$movie->setContentRating((int)$matches[5][0]);
+		$movie->setDescription($matches[6][0]);
+		$movie->set3D($matches[7][0] === '1');
+		$date = \DateTime::createFromFormat(SELF::FORMAT_DATE, $matches[3][0]);
+		$movie->setReleaseDate($date);
+		return $movie;
+		
+	}
 
-    private function getMovieRegexPattern() {
-    	return '/'
-    		.SELF::REGEX_PREFIX
-    		.SELF::REGEX_ID.','
-    		.SELF::REGEX_TITLE.','
-    		.SELF::REGEX_RELEASE_DATE.','
-    		.SELF::REGEX_DURATION.','
-    		.SELF::REGEX_CONTENT_RATING.','
-    		.SELF::REGEX_DESCRIPTION.','
-    		.SELF::REGEX_STUB.','
-    		.SELF::REGEX_STUB.','
-    		.SELF::REGEX_IS_3D.','
-    		.'/';
-    }
+	private function getMovieRegexPattern() {
+		return '/'
+			.SELF::REGEX_PREFIX
+			.SELF::REGEX_ID.','
+			.SELF::REGEX_TITLE.','
+			.SELF::REGEX_RELEASE_DATE.','
+			.SELF::REGEX_DURATION.','
+			.SELF::REGEX_CONTENT_RATING.','
+			.SELF::REGEX_DESCRIPTION.','
+			.SELF::REGEX_STUB.','
+			.SELF::REGEX_STUB.','
+			.SELF::REGEX_IS_3D.','
+			.'/';
+	}
 
 }
 

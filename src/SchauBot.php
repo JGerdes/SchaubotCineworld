@@ -4,46 +4,44 @@ namespace JGerdes\SchauBot;
 
 use Telegram\Bot\Api;
 use Katzgrau\KLogger\Logger;
+use JGerdes\SchauBot\MessagePrinter;
 
 class SchauBot {
 
 	private $config;
 	private $logger;
+	private $entityManager;
+	private $messagePrinter;
+	private $telegram;
 
 	function __construct($config, $entityManager) {
 		$this->config = $config;
 		$this->entityManager = $entityManager;
 		$this->logger = new Logger(LOG_DIR);
+		$this->messagePrinter = new MessagePrinter();
 	}
 
 	public function run() {
 
 		$this->logger->info('run bot');
-	    $telegram = new Api($this->config['telegram']['token']);
+		$this->telegram = new Api($this->config['telegram']['token']);
 
-	    $updates = $telegram->getWebhookUpdates();
-	    $movie = $this->entityManager->find('JGerdes\SchauBot\Entity\Movie', 1);
-	    $text = $this->generateMovieText($movie);
-	    if($updates->getMessage() != null) {
-		    $chatId = $updates->getMessage()->getChat()->getId();
-		    $response = $telegram->sendMessage([
-		    	'chat_id' => $chatId, 
-		    	'text' => $text,
-		    	'parse_mode' => 'HTML'
-			]);
+		$updates = $this->telegram->getWebhookUpdates();
+		
+		if($updates->getMessage() != null) {
+			$this->handleTextMessage($updates);
 		}
 	}
 
-	private function generateMovieText($movie) {
-		$hourglas = "\xE2\x8C\x9B";
-		$desc = $movie->getDescription();
-		$desc = str_replace("<br>", "\n", $desc);
-		$desc = utf8_encode(strip_tags($desc));
-		$text = "<b>".$movie->getTitle()."</b>\n"
-			."<i>".$hourglas.$movie->getDuration()." min</i> &#183; ab "
-			.$movie->getContentRating()."\n\n"
-			.$desc;
-		return $text;
+	public function handleTextMessage($update) {
+		$chatId = $update->getMessage()->getChat()->getId();
+		$movie = $this->entityManager->find('JGerdes\SchauBot\Entity\Movie', 1);
+		$text = $this->messagePrinter->generateMovieText($movie);
+		$response = $this->telegram->sendMessage([
+			'chat_id' => $chatId, 
+			'text' => $text,
+			'parse_mode' => 'HTML'
+		]);
 	}
 }
 
