@@ -22,12 +22,15 @@ class SchauBot {
 	    $telegram = new Api($this->config['telegram']['token']);
 
 	    $updates = $telegram->getWebhookUpdates();
+	    $movie = $this->entityManager->find('JGerdes\SchauBot\Entity\Movie', 1);
+	    if($updates->getMessage() != null) {
+		    $chatId = $updates->getMessage()->getChat()->getId();
+		    $response = $telegram->sendMessage([
+		    	'chat_id' => $chatId, 
+		    	'text' => $movie->getTitle()
+			]);
+		}
 
-	    $chatId = $updates->getMessage()->getChat()->getId();
-	    $response = $telegram->sendMessage([
-	    	'chat_id' => $chatId, 
-	    	'text' => 'Hello World'
-		]);
 	}
 }
 
