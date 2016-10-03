@@ -7,14 +7,17 @@ class Crawler {
 	private $config;
 	private $entityManager;
 
-	function __construct($config, $entityManager) {
+	function __construct($config, $entityManager, $parser) {
 		$this->config = $config;
 		$this->entityManager = $entityManager;
+		$this->parser = $parser;
 	}
 
 	public function crawl() {
 		$rawData = $this->fetchRawData();
-		//TODO: parse, write to db etc
+		$this->parser->setRawData($rawData);
+		$movies = $this->parser->parseMovies();
+		//TODO: write to db etc
 	}
 
 	private function fetchRawData() {
