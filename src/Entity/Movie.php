@@ -47,25 +47,58 @@ class Movie {
    	public function getId() {
 		return $this->id;
 	}
+
+	public function setId($id) {
+		$this->id = $id;
+	}
+
 	public function getTitle() {
 		return $this->title;
 	}
+
+	public function setTitle($title) {
+		$this->title = $title;
+	}
+
 	public function getReleaseDate() {
 		return $this->releaseDate;
 	}
+
+	public function setReleaseDate($releaseDate) {
+		$this->releaseDate = $releaseDate;
+	}
+
 	public function getDescription() {
 		return $this->description;
 	}
+
+	public function setDescription($description) {
+		$this->description = $description;
+	}
+
 	public function getDuration() {
 		return $this->duration;
 	}
+
+	public function setDuration($duration) {
+		$this->duration = $duration;
+	}
+
 	public function getContentRating() {
 		return $this->contentRating;
 	}
+
+	public function setContentRating($contentRating) {
+		$this->contentRating = $contentRating;
+	}
+
 	public function is3D() {
 		return $this->is3D;
 	}
 
+	public function set3D($is3D) {
+		$this->is3D = $is3D;
+	}
 
 }
 

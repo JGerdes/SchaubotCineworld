@@ -2,6 +2,8 @@
 
 namespace JGerdes\Schaubot\Crawler\Parser;
 
+use JGerdes\SchauBot\Entity\Movie;
+
 class JavascriptMovieParser {
 
 	const REGEX_PREFIX = "new movie\(";
@@ -17,6 +19,8 @@ class JavascriptMovieParser {
 	const START_STRING_MOVIES = "movies[0]";
 	const START_STRING_SCREENINGS = "timetable[0]";
 
+	const FORMAT_DATE = "ymdHi";
+
 	private $data;
 	private $rawMovieData;
 	private $rawScreeningData;
@@ -25,8 +29,8 @@ class JavascriptMovieParser {
 	 * Split data in parts for movie and screening definition
 	 */
     private function preprocess($data) {
-    	$movieStart = strpos($this->data, SELF::START_STRING_MOVIES);
-		$moviePart = substr($this->data, $movieStart, sizeof($this->data) - $movieStart);
+    	$movieStart = strpos($data, SELF::START_STRING_MOVIES);
+		$moviePart = substr($data, $movieStart, sizeof($data) - $movieStart);
 		
 		$screeningStart = strpos($moviePart, SELF::START_STRING_SCREENINGS);
 
@@ -62,7 +66,16 @@ class JavascriptMovieParser {
     private function parseSingleMovie($rawMovie, $pattern) {
     	$matches = null;
     	preg_match_all($pattern, $rawMovie, $matches);
-    	//todo: create actual movie instance
+    	$movie = new Movie();
+    	$movie->setTitle($matches[2][0]);
+    	$movie->setDuration((int)$matches[4][0]);
+    	$movie->setContentRating((int)$matches[5][0]);
+    	$movie->setDescription($matches[6][0]);
+    	$movie->set3D($matches[7][0] === '1');
+    	$date = \DateTime::createFromFormat(SELF::FORMAT_DATE, $matches[3][0]);
+    	$movie->setReleaseDate($date);
+    	return $movie;
+    	
     }
 
     private function getMovieRegexPattern() {
