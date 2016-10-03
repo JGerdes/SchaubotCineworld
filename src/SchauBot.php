@@ -33,15 +33,32 @@ class SchauBot {
 		}
 	}
 
-	public function handleTextMessage($update) {
+	private function handleTextMessage($update) {
 		$chatId = $update->getMessage()->getChat()->getId();
-		$movie = $this->entityManager->find('JGerdes\SchauBot\Entity\Movie', 1);
-		$text = $this->messagePrinter->generateMovieText($movie);
+		$query = $update->getMessage()->getText();
+		$movie = $this->searchMovie($query);
+		$text = $this->messagePrinter->generateMovieText($movie, $query);
 		$response = $this->telegram->sendMessage([
 			'chat_id' => $chatId, 
 			'text' => $text,
 			'parse_mode' => 'HTML'
 		]);
+	}
+
+	private function searchMovie($query) {
+		$result = $this->entityManager
+			->getRepository("JGerdes\SchauBot\Entity\Movie")
+			->createQueryBuilder('m')
+			->where('m.title LIKE :title')
+			->setParameter('title', '%'.$query.'%')
+			->getQuery()
+			->getResult();
+
+		if(sizeof($result) == 0) {
+			return null;
+		} else {
+			return $result[0];
+		}
 	}
 }
 

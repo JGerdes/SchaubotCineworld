@@ -6,6 +6,7 @@ namespace JGerdes\SchauBot;
 class MessagePrinter {
 
 	const EMOJI_HOURGLAS = "\xE2\x8C\x9B";
+	const EMOJI_CRYING = "\xF0\x9F\x98\xA2";
 
 	//no const here to be php 5.5 compatible
 	private $DESCRIPTION_KEYWORD = [
@@ -18,7 +19,16 @@ class MessagePrinter {
 		"Dirigent:"
 	];
 
-	public function generateMovieText($movie) {
+	public function generateMovieText($movie, $searchQuery = null) {
+		if($movie == null) {
+			$searchWrapper = "";
+			if($searchQuery != null) {
+				$searchWrapper = "zu <i>".$searchQuery."</i>  ";
+			}
+			return "Entschuldige, ich konnte keinen Film "
+					.$searchWrapper
+					."finden ".SELF::EMOJI_CRYING;
+		}
 		$desc = $this->prettyPrintDescription(
 			$movie->getDescription()
 		);
