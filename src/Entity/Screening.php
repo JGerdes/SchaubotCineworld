@@ -30,7 +30,7 @@ class Screening {
 	private $resId;
 
 	/**
-     * @ManyToOne(targetEntity="Movie")
+     * @ManyToOne(targetEntity="Movie", cascade={"persist"})
      * @JoinColumn(name="movie_id", referencedColumnName="id")
      */
     private $movie;
@@ -45,6 +45,9 @@ class Screening {
 	}
 
 
+    /**
+     * @return \DateTime
+     */
 	public function getTime() {
 		return $this->time;
 	}
