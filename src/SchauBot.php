@@ -15,7 +15,6 @@ class SchauBot {
     private $config;
     private $logger;
     private $entityManager;
-    private $messagePrinter;
     private $telegram;
     /**
      * @var InputDispatcher[]
@@ -26,7 +25,6 @@ class SchauBot {
         $this->config = $config;
         $this->entityManager = $entityManager;
         $this->logger = new Logger(LOG_DIR);
-        $this->messagePrinter = new MessagePrinter();
 
         $db = new DbController($entityManager);
 

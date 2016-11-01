@@ -7,13 +7,25 @@ use JGerdes\SchauBot\MessagePrinter;
 
 class DateDispatcher extends InputDispatcher {
 
+    private $WEEKDAYS = [
+        'montag' => 'monday',
+        'dienstag' => 'tuesday',
+        'mittwoch' => 'wednesday',
+        'donnerstag' => 'thursday',
+        'freitag' => 'friday',
+        'samstag' => 'saturday',
+        'sonntag' => 'sunday'
+    ];
+
     /**
      * @param string $input
      * @return bool whether class can process given input
      */
     public function canHandle($input) {
         $input = strtolower($input);
-        return $input === 'heute';
+        return $input === 'heute'
+        || $input === 'morgen'
+        || array_key_exists($input, $this->WEEKDAYS);
     }
 
     /**
@@ -22,18 +34,30 @@ class DateDispatcher extends InputDispatcher {
      */
     public function handle($input) {
         $input = strtolower($input);
-        switch ($input) {
-            case 'heute':
-                return $this->processDay(new \DateTime("today"));
-            case 'morgen':
-                return $this->processDay(new \DateTime("tomorrow"));
+        if ($input == 'heute') {
+            return $this->processDay(new \DateTime("today"), "heutige Kinoprogramm");
         }
-        return "Entschuldige, ich konnte für <i>" . $input . "</i> keine Vorstellung finden";
+        if ($input == 'morgen') {
+            return $this->processDay(new \DateTime("tomorrow"), "morgige Kinoprogramm");
+        }
+        if (array_key_exists($input, $this->WEEKDAYS)) {
+            $dateDay = $this->WEEKDAYS[$input];
+            $writtenDay = ucfirst($input);
+            return $this->processDay(new \DateTime($dateDay), "Kinoprogramm am " . $writtenDay);
+        }
+
+        return "Entschuldige, ich konnte für <i>" . $input . "</i> keine Vorstellung finden.";
     }
 
-    private function processDay($date) {
+    private function processDay($date, $identifier) {
         $screenings = $this->db->findScreeningsForDate($date);
-        $printer = new MessagePrinter();
-        return $printer->generateScreeningOverview($screenings);
+        if (sizeof($screenings) === 0) {
+            return "Entschuldige, ich konnte das " . $identifier . " nicht finden.";
+        } else {
+            $response = "Hier das " . $identifier . ":\n\n";
+            $printer = new MessagePrinter();
+            $response .= $printer->generateScreeningOverview($screenings);
+            return $response;
+        }
     }
 }

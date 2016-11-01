@@ -96,18 +96,16 @@ class MessagePrinter {
     }
 
     public function generateScreeningOverview($screenings) {
-        if (sizeof($screenings) === 0) {
-            return "Entschuldige, ich konnte für heute keine Vorstellung finden " . SELF::EMOJI_CRYING;
-        }
-        $data = "Hier das heutige Kinoprogram:\n\n";
+        $data = "";
         /** @var Screening $screening */
         foreach ($screenings as $screening) {
-            $data .= $screening->getMovie()->getTitle()
-                . ": "
+            $data .= "<b>"
+                . $screening->getMovie()->getTitle()
+                . "</b>: "
                 . $screening->getTime()->format("H:i")
-                . " (Kino "
+                . " <i>(Kino "
                 . $screening->getHall()
-                . ")\n";
+                . ")</i>\n";
         }
         return utf8_encode($data);
     }
