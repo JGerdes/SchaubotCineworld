@@ -2,6 +2,9 @@
 
 namespace JGerdes\SchauBot;
 
+use JGerdes\SchauBot\Database\DbController;
+use JGerdes\SchauBot\Dispatcher\CommandDispatcher;
+use JGerdes\SchauBot\Dispatcher\InputDispatcher;
 use Katzgrau\KLogger\Logger;
 use Telegram\Bot\Api;
 
@@ -12,12 +15,22 @@ class SchauBot {
     private $entityManager;
     private $messagePrinter;
     private $telegram;
+    /**
+     * @var InputDispatcher[]
+     */
+    private $inputDispatcher;
 
     function __construct($config, $entityManager) {
         $this->config = $config;
         $this->entityManager = $entityManager;
         $this->logger = new Logger(LOG_DIR);
         $this->messagePrinter = new MessagePrinter();
+
+        $db = new DbController($entityManager);
+
+        $this->inputDispatcher = [
+            new CommandDispatcher($db)
+        ];
     }
 
     public function run() {
@@ -35,13 +48,22 @@ class SchauBot {
     private function handleTextMessage($update) {
         $chatId = $update->getMessage()->getChat()->getId();
         $query = $update->getMessage()->getText();
-        if (strpos($query, 'heute') !== false) {
-            $screenings = $this->findScreenings(new \DateTime('today'));
-            $text = $this->messagePrinter->generateScreeningOverview($screenings);
-        } else {
-            $movie = $this->searchMovie($query);
-            $times = $this->findTimesByMovie($movie);
-            $text = $this->messagePrinter->generateMovieText($movie, $times, $query);
+
+        $text = null;
+        foreach ($this->inputDispatcher as $dispatcher) {
+            if ($dispatcher->canHandle($query)) {
+                $text = $dispatcher->handle($query);
+            }
+        }
+        if ($text === null) {
+            if (strpos($query, 'heute') !== false) {
+                $screenings = $this->findScreenings(new \DateTime('today'));
+                $text = $this->messagePrinter->generateScreeningOverview($screenings);
+            } else {
+                $movie = $this->searchMovie($query);
+                $times = $this->findTimesByMovie($movie);
+                $text = $this->messagePrinter->generateMovieText($movie, $times, $query);
+            }
         }
         $response = $this->telegram->sendMessage([
             'chat_id' => $chatId,
