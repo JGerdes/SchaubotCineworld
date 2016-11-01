@@ -1,6 +1,6 @@
 <?php
 
-namespace JGerdes\Schaubot\Crawler;
+namespace JGerdes\SchauBot\Crawler;
 
 
 use JGerdes\SchauBot\Entity\Movie;

@@ -3,9 +3,9 @@ require_once "bootstrap.php";
 
 
 use JGerdes\SchauBot\Crawler\Crawler;
-use JGerdes\SchauBot\Crawler\Parser\JavascriptMovieParser;
+use JGerdes\SchauBot\Crawler\Parser\TimeTableParser;
 
-$parser = new JavascriptMovieParser();
+$parser = new TimeTableParser();
 $crawler = new Crawler($config, $entityManager, $parser);
 $crawler->crawl();
 
