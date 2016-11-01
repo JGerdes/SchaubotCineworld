@@ -94,6 +94,23 @@ class MessagePrinter {
         }
         return $table;
     }
+
+    public function generateScreeningOverview($screenings) {
+        if (sizeof($screenings) === 0) {
+            return "Entschuldige, ich konnte für heute keine Vorstellung finden " . SELF::EMOJI_CRYING;
+        }
+        $data = "Hier das heutige Kinoprogram:\n\n";
+        /** @var Screening $screening */
+        foreach ($screenings as $screening) {
+            $data .= $screening->getMovie()->getTitle()
+                . ": "
+                . $screening->getTime()->format("H:i")
+                . " (Kino "
+                . $screening->getHall()
+                . ")\n";
+        }
+        return utf8_encode($data);
+    }
 }
 
 ?>

@@ -45,9 +45,6 @@ class Screening {
 	}
 
 
-    /**
-     * @return \DateTime
-     */
 	public function getTime() {
 		return $this->time;
 	}
@@ -72,9 +69,6 @@ class Screening {
 		$this->resId = $resId;
 	}
 
-    /**
-     * @return Movie
-     */
     public function getMovie() {
 		return $this->movie;
 	}

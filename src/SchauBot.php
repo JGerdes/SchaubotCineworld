@@ -2,9 +2,8 @@
 
 namespace JGerdes\SchauBot;
 
-use Telegram\Bot\Api;
 use Katzgrau\KLogger\Logger;
-use JGerdes\SchauBot\MessagePrinter;
+use Telegram\Bot\Api;
 
 class SchauBot {
 
@@ -36,9 +35,16 @@ class SchauBot {
     private function handleTextMessage($update) {
         $chatId = $update->getMessage()->getChat()->getId();
         $query = $update->getMessage()->getText();
-        $movie = $this->searchMovie($query);
-        $times = $this->findTimes($movie);
-        $text = $this->messagePrinter->generateMovieText($movie, $times, $query);
+        if (strpos($query, 'heute') !== false) {
+            $this->logger->info('search for screenings for today');
+            $screenings = $this->findScreenings(new \DateTime('today'));
+            $this->logger->info('found ' . sizeof($screenings) . ' screenings');
+            $text = $this->messagePrinter->generateScreeningOverview($screenings);
+        } else {
+            $movie = $this->searchMovie($query);
+            $times = $this->findTimesByMovie($movie);
+            $text = $this->messagePrinter->generateMovieText($movie, $times, $query);
+        }
         $response = $this->telegram->sendMessage([
             'chat_id' => $chatId,
             'text' => $text,
@@ -62,7 +68,7 @@ class SchauBot {
         }
     }
 
-    private function findTimes($movie) {
+    private function findTimesByMovie($movie) {
         if ($movie === null) {
             return [];
         } else {
@@ -72,6 +78,19 @@ class SchauBot {
                     'movie' => $movie
                 ));
         }
+    }
+
+    private function findScreenings($date) {
+        $from = new \DateTime($date->format("Y-m-d") . " 00:00:00");
+        $to = new \DateTime($date->format("Y-m-d") . " 23:59:59");
+
+        return $this->entityManager
+            ->getRepository('JGerdes\SchauBot\Entity\Screening')
+            ->createQueryBuilder("e")
+            ->where('e.time BETWEEN :from AND :to')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->getQuery()->getResult();
     }
 }
 
