@@ -4,7 +4,9 @@ namespace JGerdes\SchauBot;
 
 use JGerdes\SchauBot\Database\DbController;
 use JGerdes\SchauBot\Dispatcher\CommandDispatcher;
+use JGerdes\SchauBot\Dispatcher\DateDispatcher;
 use JGerdes\SchauBot\Dispatcher\InputDispatcher;
+use JGerdes\SchauBot\Dispatcher\SearchDispatcher;
 use Katzgrau\KLogger\Logger;
 use Telegram\Bot\Api;
 
@@ -29,12 +31,13 @@ class SchauBot {
         $db = new DbController($entityManager);
 
         $this->inputDispatcher = [
-            new CommandDispatcher($db)
+            new CommandDispatcher($db),
+            new DateDispatcher($db),
+            new SearchDispatcher($db)
         ];
     }
 
     public function run() {
-
         $this->logger->info('run bot');
         $this->telegram = new Api($this->config['telegram']['token']);
 
@@ -47,24 +50,10 @@ class SchauBot {
 
     private function handleTextMessage($update) {
         $chatId = $update->getMessage()->getChat()->getId();
-        $query = $update->getMessage()->getText();
+        $input = $update->getMessage()->getText();
 
-        $text = null;
-        foreach ($this->inputDispatcher as $dispatcher) {
-            if ($dispatcher->canHandle($query)) {
-                $text = $dispatcher->handle($query);
-            }
-        }
-        if ($text === null) {
-            if (strpos($query, 'heute') !== false) {
-                $screenings = $this->findScreenings(new \DateTime('today'));
-                $text = $this->messagePrinter->generateScreeningOverview($screenings);
-            } else {
-                $movie = $this->searchMovie($query);
-                $times = $this->findTimesByMovie($movie);
-                $text = $this->messagePrinter->generateMovieText($movie, $times, $query);
-            }
-        }
+        $text = $this->getResponse($input);
+
         $response = $this->telegram->sendMessage([
             'chat_id' => $chatId,
             'text' => $text,
@@ -72,46 +61,15 @@ class SchauBot {
         ]);
     }
 
-    private function searchMovie($query) {
-        $result = $this->entityManager
-            ->getRepository("JGerdes\SchauBot\Entity\Movie")
-            ->createQueryBuilder('m')
-            ->where('m.title LIKE :title')
-            ->setParameter('title', '%' . $query . '%')
-            ->getQuery()
-            ->getResult();
-
-        if (sizeof($result) == 0) {
-            return null;
-        } else {
-            return $result[0];
+    private function getResponse($input) {
+        foreach ($this->inputDispatcher as $dispatcher) {
+            if ($dispatcher->canHandle($input)) {
+                return $dispatcher->handle($input);
+            }
         }
+        return "Ich habe Dich leider nicht verstanden";
     }
 
-    private function findTimesByMovie($movie) {
-        if ($movie === null) {
-            return [];
-        } else {
-            return $this->entityManager
-                ->getRepository('JGerdes\SchauBot\Entity\Screening')
-                ->findBy(array(
-                    'movie' => $movie
-                ));
-        }
-    }
-
-    private function findScreenings($date) {
-        $from = new \DateTime($date->format("Y-m-d") . " 00:00:00");
-        $to = new \DateTime($date->format("Y-m-d") . " 23:59:59");
-
-        return $this->entityManager
-            ->getRepository('JGerdes\SchauBot\Entity\Screening')
-            ->createQueryBuilder("e")
-            ->where('e.time BETWEEN :from AND :to')
-            ->setParameter('from', $from)
-            ->setParameter('to', $to)
-            ->getQuery()->getResult();
-    }
 }
 
 ?>
