@@ -36,9 +36,7 @@ class SchauBot {
         $chatId = $update->getMessage()->getChat()->getId();
         $query = $update->getMessage()->getText();
         if (strpos($query, 'heute') !== false) {
-            $this->logger->info('search for screenings for today');
             $screenings = $this->findScreenings(new \DateTime('today'));
-            $this->logger->info('found ' . sizeof($screenings) . ' screenings');
             $text = $this->messagePrinter->generateScreeningOverview($screenings);
         } else {
             $movie = $this->searchMovie($query);
