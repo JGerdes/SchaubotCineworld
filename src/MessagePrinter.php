@@ -23,13 +23,13 @@ class MessagePrinter {
     ];
 
     private $WEEKDAYS = [
+        "So",
         "Mo",
         "Di",
         "Mi",
         "Do",
         "Fr",
-        "Sa",
-        "So"
+        "Sa"
     ];
 
     public function generateMovieText($movie, $screenings, $searchQuery = null) {
