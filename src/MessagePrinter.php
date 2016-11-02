@@ -62,10 +62,8 @@ class MessagePrinter {
         $table = "";
         if (sizeof($screenings) > 0) {
             $table = "\n\n"
-                . "<b>Nächste Spielzeiten:</b>"
-                . "<pre>"
-                . $this->createTimeTable($screenings)
-                . "</pre>";
+                . "<b>Nächste Spielzeiten:</b>\n"
+                . $this->createTimeTable($screenings);
         }
 
         return $text . $table;
@@ -85,14 +83,17 @@ class MessagePrinter {
     }
 
     private function createTimeTable($screenings) {
-        $table = "Tag   Zeit    Kino\n\n";
+        $table = '';
         foreach ($screenings as $screening) {
+            $ticketUrl = 'http://schauburg-cineworld.de/?page_id=6608&showId=' . $screening->getResId();
             $table .=
                 $this->WEEKDAYS[$screening->getTime()->format("w")]
-                . "    "
+                . " "
                 . $screening->getTime()->format("H:i")
-                . "      "
+                . " <i>(Kino "
                 . $screening->getHall()
+                . "</i>) "
+                . ' <a href="' . $ticketUrl . '">[reservieren]</a>'
                 . "\n";
         }
         return $table;
