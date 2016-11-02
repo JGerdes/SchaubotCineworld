@@ -14,6 +14,11 @@ class Movie {
 	 */
 	private $id;
 
+    /**
+     * @Column(type="string", length=5, name="original_id")
+     */
+    private $originalId;
+
 	/**
 	 * @Column(type="string", length=140, unique=true) 
 	 */
@@ -51,6 +56,14 @@ class Movie {
 	public function setId($id) {
 		$this->id = $id;
 	}
+
+    public function getOriginalId() {
+        return $this->originalId;
+    }
+
+    public function setOriginalId($originalId) {
+        $this->originalId = $originalId;
+    }
 
 	public function getTitle() {
 		return $this->title;

@@ -27,6 +27,7 @@ class MovieParser {
         $matches = null;
         preg_match_all($pattern, $rawMovie, $matches);
         $movie = new Movie();
+        $movie->setOriginalId($matches[1][0]);
         $movie->setTitle($matches[2][0]);
         $movie->setDuration((int)$matches[4][0]);
         $movie->setContentRating((int)$matches[5][0]);
