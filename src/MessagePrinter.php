@@ -9,6 +9,7 @@ class MessagePrinter {
 
     const EMOJI_HOURGLAS = "\xE2\x8C\x9B";
     const EMOJI_CRYING = "\xF0\x9F\x98\xA2";
+    const SPECIAL_CHAR_NO_BREAK_SPACE = " ";
 
     //no const here to be php 5.5 compatible
     private $DESCRIPTION_KEYWORD = [
@@ -44,8 +45,10 @@ class MessagePrinter {
         $desc = $this->prettyPrintDescription(
             $movie->getDescription()
         );
+        $imageUrl = "http://schauburg-cineworld.de/generated/" . $movie->getOriginalId() . ".jpg";
         $text =
-            "<b>"
+            '<a href="' . $imageUrl . '">' . SELF::SPECIAL_CHAR_NO_BREAK_SPACE . '</a>'
+            . "<b>"
             . $movie->getTitle()
             . "</b>\n"
             . "<i>"
