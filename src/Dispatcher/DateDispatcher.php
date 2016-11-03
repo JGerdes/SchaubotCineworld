@@ -4,6 +4,7 @@ namespace JGerdes\SchauBot\Dispatcher;
 
 
 use JGerdes\SchauBot\MessagePrinter;
+use JGerdes\SchauBot\Util as Util;
 
 class DateDispatcher extends InputDispatcher {
 
@@ -23,16 +24,16 @@ class DateDispatcher extends InputDispatcher {
      */
     public function handle($input) {
         $input = strtolower($input);
-        if ($input == 'heute') {
+        if (Util::contains($input, 'heute')) {
             return $this->processDay(new \DateTime("today"), "heutige Kinoprogramm");
         }
-        if ($input == 'morgen') {
+        if (Util::contains($input, 'morgen')) {
             return $this->processDay(new \DateTime("tomorrow"), "morgige Kinoprogramm");
         }
-        if (array_key_exists($input, $this->WEEKDAYS)) {
-            $dateDay = $this->WEEKDAYS[$input];
-            $writtenDay = ucfirst($input);
-            return $this->processDay(new \DateTime($dateDay), "Kinoprogramm am " . $writtenDay);
+        $weekday = $this->containsWeekday($input);
+        if ($weekday !== null) {
+            $writtenDay = ucfirst($weekday['input']);
+            return $this->processDay(new \DateTime($weekday['processable']), "Kinoprogramm am " . $writtenDay);
         }
 
         return null;
@@ -48,5 +49,17 @@ class DateDispatcher extends InputDispatcher {
             $response .= $printer->generateScreeningOverview($screenings);
             return $response;
         }
+    }
+
+    private function containsWeekday($input) {
+        foreach ($this->WEEKDAYS as $in => $out) {
+            if (Util::contains($input, $in)) {
+                return [
+                    'input' => $in,
+                    'processable' => $out
+                ];
+            }
+        }
+        return null;
     }
 }
