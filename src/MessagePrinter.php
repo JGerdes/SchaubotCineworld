@@ -4,6 +4,7 @@ namespace JGerdes\SchauBot;
 
 
 use JGerdes\SchauBot\Entity\Screening;
+use Katzgrau\KLogger\Logger;
 
 class MessagePrinter {
 
@@ -30,6 +31,16 @@ class MessagePrinter {
         "Do",
         "Fr",
         "Sa"
+    ];
+
+    private $WEEKDAYS_LONG = [
+        "Sonntag",
+        "Montag",
+        "Dienstag",
+        "Mittwoch",
+        "Donnerstag",
+        "Freitag",
+        "Samstag"
     ];
 
     public function generateMovieText($movie, $screenings, $searchQuery = null) {
@@ -82,6 +93,19 @@ class MessagePrinter {
         return str_replace($toBoldify, "<b>" . $toBoldify . "</b>", $text);
     }
 
+    private function createDateRepresentation($date) {
+        $now = new \DateTime('now');
+        $difference = $date->diff($now);
+        if ($difference->days > 7) {
+            $weekday = $this->WEEKDAYS[$date->format("w")];
+            $fulldate = $date->format("d.m.Y");
+            return $weekday . "(" . $fulldate . ")";
+        } else {
+            return $this->WEEKDAYS_LONG[$date->format("w")];
+        }
+
+    }
+
     private function createTimeTable($screenings) {
         $table = '';
         foreach ($screenings as $screening) {
@@ -92,7 +116,7 @@ class MessagePrinter {
                 . $screening->getTime()->format("H:i")
                 . " <i>(Kino "
                 . $screening->getHall()
-                . "</i>) "
+                . ")</i> "
                 . ' <a href="' . $ticketUrl . '">[reservieren]</a>'
                 . "\n";
         }
@@ -100,18 +124,44 @@ class MessagePrinter {
     }
 
     public function generateScreeningOverview($screenings) {
-        $data = "";
-        /** @var Screening $screening */
+        $dates = [];
+        //sort by weekday and time
         foreach ($screenings as $screening) {
-            $data .= "<b>"
-                . $screening->getMovie()->getTitle()
-                . "</b>: "
-                . $screening->getTime()->format("H:i")
-                . " <i>(Kino "
-                . $screening->getHall()
-                . ")</i>\n";
+            $day = $this->createDateRepresentation($screening->getTime());
+            if (!isset($dates[$day])) {
+                $dates[$day] = [];
+            }
+            $time = $screening->getTime()->format("H:i");
+            if (!isset($dates[$day][$time])) {
+                $dates[$day][$time] = [];
+            }
+            $dates[$day][$time][] = $screening;
         }
-        return utf8_encode($data);
+        $text = "";
+        $isOneDate = (sizeof($dates) === 1);
+        foreach ($dates as $date => $times) {
+            if (!$isOneDate) {
+                $text .= "\n\n<b>" . $date . "</b>";
+            }
+            foreach ($times as $time => $screenings) {
+                if ($isOneDate) {
+                    $text .= "\n\n<b>" . $time . " Uhr</b>";
+                } else {
+                    $text .= "\n\n" . $time . " Uhr";
+                }
+                foreach ($screenings as $screening) {
+                    $ticketUrl = 'http://schauburg-cineworld.de/?page_id=6608&showId=' . $screening->getResId();
+                    $text .= "\n"
+                        . $screening->getMovie()->getTitle()
+                        . " <i>(Kino "
+                        . $screening->getHall()
+                        . ")</i>"
+                        . ' <a href="' . $ticketUrl . '">[reservieren]</a>';
+                }
+            }
+        }
+
+        return utf8_encode($text);
     }
 }
 

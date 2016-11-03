@@ -54,7 +54,7 @@ class DateDispatcher extends InputDispatcher {
         if (sizeof($screenings) === 0) {
             return "Entschuldige, ich konnte das " . $identifier . " nicht finden.";
         } else {
-            $response = "Hier das " . $identifier . ":\n\n";
+            $response = "Hier das " . $identifier . ":";
             $printer = new MessagePrinter();
             $response .= $printer->generateScreeningOverview($screenings);
             return $response;
