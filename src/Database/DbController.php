@@ -47,10 +47,7 @@ class DbController {
         }
     }
 
-    public function findScreeningsForDate($date) {
-        $from = new \DateTime($date->format("Y-m-d") . " 00:00:00");
-        $to = new \DateTime($date->format("Y-m-d") . " 23:59:59");
-
+    public function findScreeningsBetweenDates($from, $to) {
         return $this->entityManager
             ->getRepository('JGerdes\SchauBot\Entity\Screening')
             ->createQueryBuilder("e")
@@ -58,5 +55,19 @@ class DbController {
             ->setParameter('from', $from)
             ->setParameter('to', $to)
             ->getQuery()->getResult();
+    }
+
+    public function findScreeningsForDate($date) {
+        $from = new \DateTime($date->format("Y-m-d") . " 00:00:00");
+        $to = new \DateTime($date->format("Y-m-d") . " 23:59:59");
+
+        return $this->findScreeningsBetweenDates($from, $to);
+    }
+
+    public function findScreeningsForAndBetweenDates($from, $to) {
+        $from = new \DateTime($from->format("Y-m-d") . " 00:00:00");
+        $to = new \DateTime($to->format("Y-m-d") . " 23:59:59");
+
+        return $this->findScreeningsBetweenDates($from, $to);
     }
 }
