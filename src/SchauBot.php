@@ -9,6 +9,7 @@ use JGerdes\SchauBot\Dispatcher\InputDispatcher;
 use JGerdes\SchauBot\Dispatcher\SearchDispatcher;
 use Katzgrau\KLogger\Logger;
 use Telegram\Bot\Api;
+use Telegram\Bot\Objects\Update;
 
 class SchauBot {
 
@@ -49,7 +50,6 @@ class SchauBot {
     private function handleTextMessage($update) {
         $chatId = $update->getMessage()->getChat()->getId();
         $input = $update->getMessage()->getText();
-
         $text = $this->getResponse($input);
 
         $response = $this->telegram->sendMessage([
@@ -67,7 +67,7 @@ class SchauBot {
                 return $response;
             }
         }
-        return "Ich habe Dich leider nicht verstanden";
+        return "Ich habe Dich leider nicht verstanden " . Emoji::CRYING;
     }
 
 }

@@ -3,13 +3,8 @@
 namespace JGerdes\SchauBot;
 
 
-use JGerdes\SchauBot\Entity\Screening;
-use Katzgrau\KLogger\Logger;
-
 class MessagePrinter {
 
-    const EMOJI_HOURGLAS = "\xE2\x8C\x9B";
-    const EMOJI_CRYING = "\xF0\x9F\x98\xA2";
     const SPECIAL_CHAR_NO_BREAK_SPACE = " ";
 
     //no const here to be php 5.5 compatible
@@ -51,7 +46,7 @@ class MessagePrinter {
             }
             return "Entschuldige, ich konnte keinen Film "
             . $searchWrapper
-            . "finden " . SELF::EMOJI_CRYING;
+            . "finden " . Emoji::CRYING;
         }
         $desc = $this->prettyPrintDescription(
             $movie->getDescription()
@@ -63,9 +58,9 @@ class MessagePrinter {
             . $movie->getTitle()
             . "</b>\n"
             . "<i>"
-            . SELF::EMOJI_HOURGLAS
+            . Emoji::HOURGLAS
             . $movie->getDuration()
-            . " min</i> &#183; ab "
+            . " min</i> ".Emoji::MIDDLE_DOT." ab "
             . $movie->getContentRating()
             . "\n\n"
             . $desc;
