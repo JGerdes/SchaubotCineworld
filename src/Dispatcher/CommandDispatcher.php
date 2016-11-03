@@ -6,14 +6,6 @@ class CommandDispatcher extends InputDispatcher {
 
     /**
      * @param string $input
-     * @return bool whether class can process given input
-     */
-    public function canHandle($input) {
-        return $input[0] === '/';
-    }
-
-    /**
-     * @param string $input
      * @return string result/answer to given input
      */
     public function handle($input) {
@@ -21,7 +13,10 @@ class CommandDispatcher extends InputDispatcher {
             case '/start':
                 return $this->showWelcomeMessage();
         }
-        return 'Das war leider kein gültiger Befehl. Frag mich doch einfach was!';
+        if ($input[0] === "/") {
+            return 'Das war leider kein gültiger Befehl. Frag mich doch einfach was!';
+        }
+        return null;
     }
 
     private function showWelcomeMessage() {

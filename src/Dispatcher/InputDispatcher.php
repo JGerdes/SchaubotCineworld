@@ -22,12 +22,6 @@ abstract class InputDispatcher {
 
     /**
      * @param string $input
-     * @return bool whether class can process given input
-     */
-    public abstract function canHandle($input);
-
-    /**
-     * @param string $input
      * @return string result/answer to given input
      */
     public abstract function handle($input);

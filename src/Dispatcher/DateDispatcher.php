@@ -19,17 +19,6 @@ class DateDispatcher extends InputDispatcher {
 
     /**
      * @param string $input
-     * @return bool whether class can process given input
-     */
-    public function canHandle($input) {
-        $input = strtolower($input);
-        return $input === 'heute'
-        || $input === 'morgen'
-        || array_key_exists($input, $this->WEEKDAYS);
-    }
-
-    /**
-     * @param string $input
      * @return string result/answer to given input
      */
     public function handle($input) {
@@ -46,7 +35,7 @@ class DateDispatcher extends InputDispatcher {
             return $this->processDay(new \DateTime($dateDay), "Kinoprogramm am " . $writtenDay);
         }
 
-        return "Entschuldige, ich konnte für <i>" . $input . "</i> keine Vorstellung finden.";
+        return null;
     }
 
     private function processDay($date, $identifier) {

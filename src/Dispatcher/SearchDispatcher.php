@@ -9,15 +9,6 @@ class SearchDispatcher extends InputDispatcher {
 
     /**
      * @param string $input
-     * @return bool whether class can process given input
-     */
-    public function canHandle($input) {
-        //treat any input as search query
-        return true;
-    }
-
-    /**
-     * @param string $input
      * @return string result/answer to given input
      */
     public function handle($input) {

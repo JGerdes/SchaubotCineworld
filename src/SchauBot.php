@@ -60,9 +60,11 @@ class SchauBot {
     }
 
     private function getResponse($input) {
+        $response = null;
         foreach ($this->inputDispatcher as $dispatcher) {
-            if ($dispatcher->canHandle($input)) {
-                return $dispatcher->handle($input);
+            $response = $dispatcher->handle($input);
+            if ($response !== null) {
+                return $response;
             }
         }
         return "Ich habe Dich leider nicht verstanden";
