@@ -59,13 +59,18 @@ class DateDispatcher extends InputDispatcher {
 
     private function createTimeTable($screenings, $identifier) {
         if (sizeof($screenings) === 0) {
-            return "Entschuldige, ich konnte das " . $identifier . " nicht finden.";
+            $response = "Entschuldige, ich konnte das " . $identifier . " nicht finden."
+                . "\n"
+                . "Beachte, dass das Programm nur eine Woche im Voraus geplant"
+                . " und in der Regel dienstags aktualisiert wird.";
+
+
         } else {
             $response = "Hier das " . $identifier . ":";
             $printer = new MessagePrinter();
             $response .= $printer->generateScreeningOverview($screenings);
-            return $response;
         }
+        return $response;
     }
 
     private function containsWeekday($input) {
