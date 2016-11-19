@@ -4,13 +4,13 @@ namespace JGerdes\SchauBot\Dispatcher;
 
 use JGerdes\SchauBot\Emoji;
 
-class CommandDispatcher extends InputDispatcher {
+class CommandDispatcher extends TextMessageDispatcher {
 
     /**
-     * @param string $input
+     * @param $input string
      * @return string result/answer to given input
      */
-    public function handle($input) {
+    public function getResponse($input) {
         switch ($input) {
             case '/start':
             case '/help':
@@ -38,4 +38,6 @@ class CommandDispatcher extends InputDispatcher {
         . " Gibt dafür einfach ohne irgendwas anderes Teile des Names ein, ich suche dann für Dich was passendes!\n"
         . "\n Na dann mal <i>Action!</i>  " . Emoji::CLAPPER_BOARD;
     }
+
+
 }

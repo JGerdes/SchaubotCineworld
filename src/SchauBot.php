@@ -9,7 +9,6 @@ use JGerdes\SchauBot\Dispatcher\InputDispatcher;
 use JGerdes\SchauBot\Dispatcher\SearchDispatcher;
 use Katzgrau\KLogger\Logger;
 use Telegram\Bot\Api;
-use Telegram\Bot\Objects\Update;
 
 class SchauBot {
 
@@ -26,48 +25,43 @@ class SchauBot {
         $this->config = $config;
         $this->entityManager = $entityManager;
         $this->logger = new Logger(LOG_DIR);
-
-        $db = new DbController($entityManager);
-
-        $this->inputDispatcher = [
-            new CommandDispatcher($db),
-            new DateDispatcher($db),
-            new SearchDispatcher($db)
-        ];
     }
 
     public function run() {
         $this->logger->info('run bot');
         $this->telegram = new Api($this->config['telegram']['token']);
 
+        $db = new DbController($this->entityManager);
+
+        $this->inputDispatcher = [
+            new CommandDispatcher($db, $this->telegram),
+            new DateDispatcher($db, $this->telegram),
+            new SearchDispatcher($db, $this->telegram)
+        ];
+
         $updates = $this->telegram->getWebhookUpdates();
 
         if ($updates->getMessage() != null) {
-            $this->handleTextMessage($updates);
+            $this->sendResponse($updates->getMessage());
         }
     }
 
-    private function handleTextMessage($update) {
-        $chatId = $update->getMessage()->getChat()->getId();
-        $input = $update->getMessage()->getText();
-        $text = $this->getResponse($input);
 
-        $response = $this->telegram->sendMessage([
+    private function sendResponse($message) {
+        $response = null;
+        foreach ($this->inputDispatcher as $dispatcher) {
+            $handled = $dispatcher->handle($message);
+            if ($handled === true) {
+                return;
+            }
+        }
+        $text = "Ich habe Dich leider nicht verstanden " . Emoji::CRYING;
+        $chatId = $message->getChat()->getId();
+        $this->telegram->sendMessage([
             'chat_id' => $chatId,
             'text' => $text,
             'parse_mode' => 'HTML'
         ]);
-    }
-
-    private function getResponse($input) {
-        $response = null;
-        foreach ($this->inputDispatcher as $dispatcher) {
-            $response = $dispatcher->handle($input);
-            if ($response !== null) {
-                return $response;
-            }
-        }
-        return "Ich habe Dich leider nicht verstanden " . Emoji::CRYING;
     }
 
 }

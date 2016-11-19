@@ -6,7 +6,7 @@ namespace JGerdes\SchauBot\Dispatcher;
 use JGerdes\SchauBot\MessagePrinter;
 use JGerdes\SchauBot\Util as Util;
 
-class DateDispatcher extends InputDispatcher {
+class DateDispatcher extends TextMessageDispatcher {
 
     private $WEEKDAYS = [
         'montag' => 'monday',
@@ -22,7 +22,7 @@ class DateDispatcher extends InputDispatcher {
      * @param string $input
      * @return string result/answer to given input
      */
-    public function handle($input) {
+    public function getResponse($input) {
         $input = strtolower($input);
         if (Util::contains($input, 'heute')) {
             return $this->processDay(new \DateTime("today"), "heutige Kinoprogramm");
