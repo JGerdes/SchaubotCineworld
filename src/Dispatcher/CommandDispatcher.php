@@ -28,7 +28,7 @@ class CommandDispatcher extends InputDispatcher {
     private function showHelp() {
         return ""
         . "Hey!\n"
-        . "Du kannst mir einfach irgendwas fragen, was Dich interessiert."
+        . "Du kannst mich einfach irgendwas fragen, was Dich interessiert."
         . " Ich versuche dann so gut es geht zu antworten.\n"
         . "Probiere zum Beispiel mal folgende Fragen:\n\n"
         . Emoji::MIDDLE_DOT . " <i>Was läuft heute?</i>\n"

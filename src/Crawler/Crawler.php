@@ -43,7 +43,7 @@ class Crawler {
                 $this->entityManager->persist($movie);
                 $this->entityManager->flush();
             } else {
-                //update all screenings with ne movie id
+                //update all screenings with new movie id
                 //todo: improve this process
                 foreach ($screenings as $screening) {
                     if ($screening->getMovie()->getTitle() == $existing->getTitle()) {
