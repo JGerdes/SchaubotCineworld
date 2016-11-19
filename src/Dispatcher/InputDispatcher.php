@@ -5,7 +5,6 @@ namespace JGerdes\SchauBot\Dispatcher;
 
 use JGerdes\SchauBot\Database\DbController;
 use Telegram\Bot\Api;
-use Telegram\Bot\TelegramClient;
 use Telegram\Bot\Objects\Message;
 
 
@@ -41,6 +40,29 @@ abstract class InputDispatcher {
             'chat_id' => $chatId,
             'text' => $text,
             'parse_mode' => 'HTML'
+        ]);
+    }
+
+    /**
+     * @param $message Message
+     * @param $document string
+     */
+    protected function sendDocument($message, $document) {
+        $chatId = $message->getChat()->getId();
+        $this->telegram->sendDocument([
+            'chat_id' => $chatId,
+            'document' => $document
+        ]);
+    }
+
+    /**
+     * @param $message Message
+     */
+    protected function startTyping($message) {
+        $chatId = $message->getChat()->getId();
+        $this->telegram->sendChatAction([
+            'chat_id' => $chatId,
+            'action' => 'typing'
         ]);
     }
 

@@ -5,6 +5,7 @@ namespace JGerdes\SchauBot;
 use JGerdes\SchauBot\Database\DbController;
 use JGerdes\SchauBot\Dispatcher\CommandDispatcher;
 use JGerdes\SchauBot\Dispatcher\DateDispatcher;
+use JGerdes\SchauBot\Dispatcher\EasterEggDispatcher;
 use JGerdes\SchauBot\Dispatcher\InputDispatcher;
 use JGerdes\SchauBot\Dispatcher\SearchDispatcher;
 use Katzgrau\KLogger\Logger;
@@ -36,6 +37,7 @@ class SchauBot {
         $this->inputDispatcher = [
             new CommandDispatcher($db, $this->telegram),
             new DateDispatcher($db, $this->telegram),
+            new EasterEggDispatcher($db, $this->telegram),
             new SearchDispatcher($db, $this->telegram)
         ];
 
