@@ -7,7 +7,7 @@ use JGerdes\SchauBot\Util;
 
 class EasterEggDispatcher extends InputDispatcher {
 
-    private $POPCORN_GIFS = [
+    private $GIFS_POPCORN = [
         'http://i.giphy.com/3oGRFGmtIJe1AZFDtm.gif', //Boehmermann
         'http://i.giphy.com/zA8YZufPBK46Y.gif', // IT-Crowd
         'http://i.giphy.com/tFK8urY6XHj2w.gif', // 3D-Glas-Guy
@@ -15,8 +15,26 @@ class EasterEggDispatcher extends InputDispatcher {
         'http://i.giphy.com/cHKnErUX39Xxe.gif' //Panda
     ];
 
+    private $SOUND_INCEPTION = 'AwADBAADHAADxeSFETPT0mBvuhERAg'; //file_id on telegram server
+    private $SOUND_INCEPTION_DURATION = 3;
+    private $GIF_INCEPTION = 'http://i.giphy.com/7GnpBauVVOsBW.gif';
+
+
     public function handle($message) {
         $input = strtolower($message->getText());
+        if (Util::contains($input, 'inception')) {
+            $this->startRecord($message);
+            $this->sendDocument($message, $this->GIF_INCEPTION);
+            $this->sendVoice($message, $this->SOUND_INCEPTION, $this->SOUND_INCEPTION_DURATION);
+            return true;
+        }
+
+        if ($message->getVoice() != null) {
+            $this->startRecord($message);
+            $this->sendVoice($message, $this->SOUND_INCEPTION, $this->SOUND_INCEPTION_DURATION);
+            return true;
+        }
+
         if (Util::contains($input, 'popkorn')
             || Util::contains($input, 'popcorn')
             || $message->getText() == null
@@ -31,8 +49,8 @@ class EasterEggDispatcher extends InputDispatcher {
     }
 
     private function getRandomPopcornGif() {
-        $random = rand(0, count($this->POPCORN_GIFS) - 1);
-        return $this->POPCORN_GIFS[$random];
+        $random = rand(0, count($this->GIFS_POPCORN) - 1);
+        return $this->GIFS_POPCORN[$random];
     }
 
 }
