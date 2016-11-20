@@ -19,6 +19,8 @@ class EasterEggDispatcher extends InputDispatcher {
     private $SOUND_INCEPTION_DURATION = 3;
     private $GIF_INCEPTION = 'http://i.giphy.com/7GnpBauVVOsBW.gif';
 
+    private $GIF_FARGO_OKAY = 'http://i.giphy.com/Yt4O1DVRpyxR6.gif';
+
 
     public function handle($message) {
         $input = strtolower($message->getText());
@@ -41,6 +43,12 @@ class EasterEggDispatcher extends InputDispatcher {
         ) {
             $this->startTyping($message);
             $this->sendDocument($message, $this->getRandomPopcornGif());
+            return true;
+        }
+
+        if (trim($input) == 'okay') {
+            $this->startTyping($message);
+            $this->sendDocument($message, $this->GIF_FARGO_OKAY);
             return true;
         }
 
