@@ -11,13 +11,15 @@ class CommandDispatcher extends TextMessageDispatcher {
      * @return string result/answer to given input
      */
     public function getResponse($input) {
+        $input = strtolower($input);
         switch ($input) {
             case '/start':
             case '/help':
             case '/hilfe':
             case 'hilfe':
-            case 'Hilfe':
                 return $this->showHelp();
+            case 'danke':
+                return 'Immer gerne! ' . Emoji::SMILE_BLUSHED;
         }
         if ($input[0] === "/") {
             return 'Das war leider kein gültiger Befehl' . Emoji::CONFUSED . ' Frag mich doch einfach was!';
